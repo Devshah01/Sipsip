@@ -1,0 +1,89 @@
+/* Sits above card top border, centered over glass */
+.fillBtnWrap {
+  position: absolute;
+  left: 50%;
+  top: -1px;
+  z-index: 10;
+  cursor: pointer;
+  touch-action: none;
+  /* reveal animation */
+  opacity: 0;
+  transform: translateX(-50%) translateY(-14px);
+  transition:
+    opacity 0.75s cubic-bezier(0.16,1,0.3,1),
+    transform 0.75s cubic-bezier(0.16,1,0.3,1);
+}
+.fillBtnWrap.fillVisible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.fillBtn {
+  width: clamp(90px, 26vw, 130px);
+  height: clamp(48px, 14vw, 70px);
+  background: #ffffff;
+  border: 1.5px solid #d4dae4;
+  border-top: none;
+  border-radius: 0 0 130px 130px;
+  box-shadow:
+    0px 8px 18px rgba(180,195,215,0.55),
+    inset 0px -2px 6px rgba(255,255,255,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: box-shadow 0.15s, transform 0.12s;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.fillBtn::before {
+  content: '';
+  position: absolute;
+  bottom: 14px; left: 20px; right: 20px;
+  height: 16px;
+  background: linear-gradient(to top, rgba(255,255,255,0.6), transparent);
+  border-radius: 50%;
+}
+
+.fillBtn.pressing,
+.fillBtn:active {
+  box-shadow:
+    0px 3px 8px rgba(180,195,215,0.4),
+    inset 0px 4px 10px rgba(180,195,215,0.3);
+  transform: scaleY(0.97);
+}
+
+.fillBtn span {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(12px, 3vw, 16px);
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 10px;
+  letter-spacing: 0.3px;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.fillBtn.full span { color: #3b82f6; }
+
+/* Dark mode */
+.fillBtn.dark {
+  background: #1e2231;
+  border-color: rgba(255,255,255,0.1);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3), inset 0 -1px 2px rgba(255,255,255,0.03);
+}
+.fillBtn.dark::before { display: none; }
+.fillBtn.dark span    { color: #6a7a94; }
+.fillBtn.dark.pressing {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3), inset 0 3px 8px rgba(0,0,0,0.4);
+}
+
+/* Desktop */
+@media (min-width: 961px) {
+  .fillBtnWrap { left: 50%; }
+  .fillBtn     { width: 130px; height: 70px; }
+}

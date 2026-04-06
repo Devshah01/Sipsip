@@ -1,0 +1,46 @@
+@import './reset.css';
+@import './typography.css';
+@import './variables.css';
+@import './scrollbar.css';
+@import './animations.css';
+@import './utils.css';
+
+/* ════════════════════════════════════════════
+   BACK BUTTON — GLOBAL (UNIQUE & CONSISTENT)
+════════════════════════════════════════════ */
+.back-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.45rem !important;
+  padding: 0.45rem 1rem 0.45rem 0.7rem !important;
+  border-radius: 999px !important;
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: none !important;
+  font-family: var(--font) !important;
+  font-size: 0.62rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.08em !important;
+  color: var(--text2) !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  margin-bottom: 1.25rem !important;
+  opacity: 0;
+  transform: translateX(-16px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              color 0.2s ease,
+              box-shadow 0.2s ease;
+}
+
+.back-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
+}
+
+.back-btn:hover {
+  color: var(--text) !important;
+  box-shadow: none !important;
+  transform: translateX(-2px) !important;
+}

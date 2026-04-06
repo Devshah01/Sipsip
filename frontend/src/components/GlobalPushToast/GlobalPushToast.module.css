@@ -1,0 +1,210 @@
+/* Mirrors Notifications in-app toast so scheduled pushes are visible on any page */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  padding: 16px 16px 0;
+  pointer-events: none;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(30, 30, 40, 0.88);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 14px 16px 12px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  pointer-events: auto;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  animation: toastSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform: translateY(-120%);
+}
+
+.cardExiting {
+  animation: toastSlideOut 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes toastSlideIn {
+  0%   { transform: translateY(-120%) scale(0.92); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes toastSlideOut {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-120%) scale(0.92); opacity: 0; }
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 60%,
+    transparent 100%
+  );
+  animation: shimmerSweep 2s ease-in-out 0.5s;
+  pointer-events: none;
+}
+
+@keyframes shimmerSweep {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.appIcon {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, #74b9ff, #3B82F6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.appName {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  flex: 1;
+}
+
+.time {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: 'Space Mono', monospace;
+}
+
+.body {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.emoji {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+  animation: toastWobble 0.6s ease-in-out 0.4s;
+}
+
+@keyframes toastWobble {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-12deg) scale(1.1); }
+  50%      { transform: rotate(8deg) scale(1.05); }
+  75%      { transform: rotate(-4deg); }
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 3px;
+  letter-spacing: -0.01em;
+}
+
+.message {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.45;
+}
+
+.progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #74b9ff, #818CF8, #f472b6);
+  border-radius: 0 0 20px 20px;
+  animation: toastCountdown 4s linear forwards;
+}
+
+@keyframes toastCountdown {
+  0%   { width: 100%; }
+  100% { width: 0%; }
+}
+
+.dismiss {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+:global(body:not(.dark)) .card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+:global(body:not(.dark)) .appName {
+  color: rgba(0, 0, 0, 0.45);
+}
+:global(body:not(.dark)) .time {
+  color: rgba(0, 0, 0, 0.3);
+}
+:global(body:not(.dark)) .title {
+  color: #1a1a2e;
+}
+:global(body:not(.dark)) .message {
+  color: rgba(0, 0, 0, 0.55);
+}
+:global(body:not(.dark)) .dismiss {
+  color: rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 480px) {
+  .overlay {
+    padding: 10px 10px 0;
+  }
+  .card {
+    border-radius: 16px;
+    padding: 12px 14px 10px;
+  }
+  .title { font-size: 14px; }
+  .message { font-size: 12px; }
+  .emoji { font-size: 28px; }
+}

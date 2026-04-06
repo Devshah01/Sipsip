@@ -1,0 +1,70 @@
+@keyframes slideCollide {
+  0%   { transform: translateY(-120vh); opacity: 0; }
+  60%  { transform: translateY(0);      opacity: 1; }
+  75%  { transform: translateY(-15px); }
+  90%  { transform: translateY(6px); }
+  100% { transform: translateY(0);      opacity: 1; }
+}
+@keyframes floatGlass {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-4px); }
+}
+@keyframes curtainUp {
+  to { transform: translateY(0%); opacity: 1; }
+}
+@keyframes charReveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes glassDown {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes logoFill {
+  to { transform: scaleY(1); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(32px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes drFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-3px); }
+}
+@keyframes gIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+@keyframes gBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-14px); }
+}
+@keyframes cFall {
+  0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+@keyframes glassShake {
+  0%   { transform: translateX(0) rotate(0deg); }
+  15%  { transform: translateX(-6px) rotate(-3deg); }
+  30%  { transform: translateX(6px)  rotate(3deg); }
+  45%  { transform: translateX(-5px) rotate(-2deg); }
+  60%  { transform: translateX(5px)  rotate(2deg); }
+  75%  { transform: translateX(-3px) rotate(-1deg); }
+  90%  { transform: translateX(3px)  rotate(1deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes blobDrift1 {
+  0%, 100% { transform: translate(0, 0)    scale(1); }
+  33%       { transform: translate(30px, -20px) scale(1.05); }
+  66%       { transform: translate(-20px, 15px) scale(0.95); }
+}
+@keyframes blobDrift2 {
+  0%, 100% { transform: translate(0, 0)    scale(1); }
+  33%       { transform: translate(-25px, 20px) scale(1.08); }
+  66%       { transform: translate(20px, -15px) scale(0.92); }
+}

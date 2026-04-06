@@ -1,0 +1,721 @@
+/* ═══════════════════════════════════════════════════
+   Notifications.module.css — SipSip Notifications
+   All values ported pixel-perfect from Notifications.html
+   ═══════════════════════════════════════════════════ */
+
+/* ── Particle canvas ── */
+.particleCanvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ── Page layout ── */
+.pageWrapper {
+  padding-bottom: 60px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.notifWrap {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem 2rem 5rem;
+  user-select: none;
+  -webkit-user-select: none;
+}
+@media (max-width: 640px) {
+  .notifWrap { padding: 1.5rem 1.25rem 4rem; }
+}
+
+/* ── Reveal animations ── */
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal { opacity: 0; animation: revealUp 0.55s cubic-bezier(.22,1,.36,1) forwards; }
+.d1 { animation-delay: 0.10s; }
+.d2 { animation-delay: 0.18s; }
+.d3 { animation-delay: 0.26s; }
+.d4 { animation-delay: 0.34s; }
+.d5 { animation-delay: 0.44s; }
+.d6 { animation-delay: 0.54s; }
+.d7 { animation-delay: 0.64s; }
+.d8 { animation-delay: 0.74s; }
+.d9 { animation-delay: 0.84s; }
+
+/* ── Page heading ── */
+.pageHeading {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: .3rem;
+  line-height: 1.1;
+}
+.pageSub {
+  font-size: .58rem;
+  font-weight: 500;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 2rem;
+}
+
+/* ── Section label ── */
+.sectionLabel {
+  font-size: .52rem;
+  font-weight: 600;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 0 .25rem;
+  margin-bottom: .65rem;
+  margin-top: 1.75rem;
+}
+
+/* ── Neo card base ── */
+.neoCard {
+  background: var(--card);
+  border-radius: 26px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: background 0.4s, box-shadow 0.4s;
+}
+
+/* ── Hero card ── */
+.notifHero {
+  padding: 2.5rem 1.75rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: .5rem;
+}
+.notifHero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--water), #818CF8, #f472b6);
+  border-radius: 26px 26px 0 0;
+}
+.notifBell {
+  font-size: 2.6rem;
+  margin-bottom: .85rem;
+  display: block;
+  animation: bellRing 3s ease-in-out infinite;
+  transform-origin: top center;
+}
+@keyframes bellRing {
+  0%,100% { transform: rotate(0); }
+  10%     { transform: rotate(12deg); }
+  20%     { transform: rotate(-10deg); }
+  30%     { transform: rotate(8deg); }
+  40%     { transform: rotate(-6deg); }
+  50%     { transform: rotate(0); }
+}
+.notifHeroTitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: .4rem;
+  letter-spacing: -0.02em;
+}
+.notifHeroSub {
+  font-size: .83rem;
+  font-weight: 300;
+  color: var(--text2);
+  line-height: 1.65;
+  margin-bottom: 1.6rem;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.notifBtnWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+}
+.notifAllowBtn {
+  padding: .8rem 2.4rem;
+  background: var(--text);
+  color: var(--bg);
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow .2s, transform .12s, background .3s;
+  cursor: pointer;
+  border: none;
+}
+.notifAllowBtn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.12);
+  transform: translateX(-100%);
+  transition: transform .4s ease;
+  pointer-events: none;
+}
+.notifAllowBtn:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); }
+.notifAllowBtn:hover::after { transform: translateX(100%); }
+.notifAllowBtn:active { transform: scale(0.97) !important; }
+.notifAllowBtn.granted { background: #2D7A40 !important; color: #fff !important; }
+.notifAllowBtn.denied  { background: #888    !important; color: #fff !important; }
+
+.permBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .52rem;
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity .4s, transform .4s;
+  color: var(--text3);
+}
+.permBadge.permShow { opacity: 1; transform: translateY(0); }
+.permDot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text4);
+  flex-shrink: 0;
+}
+.grantedBadge { color: #2D7A40 !important; }
+.grantedBadge .permDot { background: #2D7A40 !important; }
+.deniedBadge  { color: #B91C1C !important; }
+.deniedBadge  .permDot { background: #B91C1C !important; }
+
+.revokeHint {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  font-size: 0.65rem;
+  color: var(--text3);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 0.2s;
+  font-family: inherit;
+}
+.revokeHint:hover {
+  color: var(--text2);
+}
+
+/* ── Window card / Polaroids ── */
+.windowCard { padding: 1.4rem 1.6rem 1.5rem; }
+
+.polaroidSection { display: flex; flex-direction: column; gap: 16px; }
+
+.polaroidRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.polaroidCard {
+  background: #fff;
+  padding: 10px 10px 22px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.06);
+  border-radius: 4px;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+  width: 130px;
+  flex-shrink: 0;
+  cursor: default;
+}
+.wakeCard  { transform: rotate(-2.5deg); }
+.sleepCard { transform: rotate(2deg); }
+.polaroidCard:hover { transform: rotate(0) scale(1.04) !important; box-shadow: 0 14px 40px rgba(0,0,0,0.14); z-index: 2; }
+
+:global(body.dark) .polaroidCard { background: #252a3a; }
+
+.polImg {
+  width: 100%; height: 80px;
+  border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+}
+.wakeImg  { background: linear-gradient(135deg,#FEF3C7,#FDE68A,#FCD34D); }
+.sleepImg { background: linear-gradient(135deg,#EDE9FE,#C4B5FD,#A78BFA); }
+
+:global(body.dark) .wakeImg  { background: linear-gradient(135deg,#78350F,#92400E,#B45309); }
+:global(body.dark) .sleepImg { background: linear-gradient(135deg,#3730A3,#4338CA,#6366F1); }
+
+.polCap { text-align: center; margin-top: 10px; }
+.polTime  { font-size: 18px; font-weight: 700; font-family: 'Space Mono', monospace; color: var(--text); line-height: 1; }
+.polLabel { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); margin-top: 3px; }
+
+.polaroidMiddle {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 5px; padding: 0 4px 22px;
+}
+.polMidDur   { font-size: 9px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text4); }
+.polMidArrow { font-size: 16px; color: var(--text4); }
+
+.polMidNow { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 2px; }
+.polMidNowDot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #3B82F6;
+  animation: pulseNow 2s infinite;
+}
+@keyframes pulseNow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(59,130,246,0); }
+}
+.polMidNowTime  { font-size: 12px; font-weight: 700; font-family: 'Space Mono', monospace; color: #3B82F6; }
+.polMidNowLabel { font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); }
+.polMidRemaining { font-size: 11px; font-weight: 700; color: #22C55E; margin-top: 2px; }
+
+.timeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: flex-end;
+  margin: 1rem 0 0.5rem;
+  padding: 0 0.5rem;
+}
+.timeField {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+.timeValue {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  padding: 0.45rem 0.65rem;
+  border-radius: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.polProgressWrap {
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+}
+.polProgressBar {
+  height: 5px; border-radius: 3px;
+  background: var(--border-md, rgba(0,0,0,0.11));
+  position: relative; overflow: visible;
+}
+.polProgressFill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, #F59E0B, #22C55E);
+  position: relative;
+  transition: width .6s ease;
+}
+.polProgressFill::after {
+  content: ''; position: absolute; right: -1px; top: 50%;
+  transform: translateY(-50%);
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--card);
+  border: 2.5px solid #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+}
+.polProgressLabels {
+  display: flex; justify-content: space-between;
+  margin-top: 9px;
+  font-size: 10px; font-weight: 600; color: var(--text3);
+}
+.polProgressLabels span:first-child { color: #F59E0B; }
+.polProgressLabels span:last-child  { color: #818CF8; }
+.lblNow { color: #3B82F6 !important; font-weight: 700 !important; }
+
+.wstatus {
+  margin-top: .75rem;
+  display: flex; align-items: center; gap: .4rem;
+  font-size: .73rem; font-weight: 300; color: var(--text2);
+}
+.wstatusPulse {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  background: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.2);
+  animation: wPulse 2s ease-in-out infinite;
+}
+.wstatusPulse.inactive { background: var(--text4); box-shadow: none; animation: none; }
+@keyframes wPulse {
+  0%,100% { box-shadow: 0 0 0 3px rgba(59,130,246,.18); }
+  50%     { box-shadow: 0 0 0 7px rgba(59,130,246,.05); }
+}
+
+/* ── Frequency arc speedometer ── */
+.freqCard { padding: 1.4rem 1.5rem 1.5rem; }
+.freqHeader {
+  display: flex; align-items: center;
+  gap: .85rem; margin-bottom: 1.3rem;
+}
+.freqIcon {
+  width: 40px; height: 40px; border-radius: 14px;
+  background: rgba(116,185,255,0.12);
+  border: 1px solid rgba(116,185,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.freqTitle { font-size: .9rem; font-weight: 500; color: var(--text); margin-bottom: .15rem; }
+.freqSub   { font-size: .49rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--text3); }
+
+.arcSpeedo { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.arcGaugeWrap { position: relative; width: 100%; max-width: 300px; height: 172px; }
+.arcSvg { width: 100%; height: 100%; overflow: visible; cursor: pointer; }
+.arcCenter {
+  position: absolute; bottom: 2px; left: 50%;
+  transform: translateX(-50%);
+  text-align: center; pointer-events: none; white-space: nowrap;
+}
+.ascVal   { font-size: 44px; font-weight: 700; font-family: 'Space Mono', monospace; color: var(--text); line-height: 1; }
+.ascLabel { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--text3); margin-top: 1px; }
+
+.arcTicks {
+  display: flex; justify-content: space-between;
+  width: 100%; max-width: 300px;
+  padding: 0 2px;
+  font-size: 9px; font-weight: 600; letter-spacing: .04em; color: var(--text4);
+}
+.arcTicks span { transition: color .18s, font-size .18s; cursor: pointer; }
+.arcTicks span:hover { color: var(--text2); }
+.activeTick { color: var(--text) !important; font-size: 10px !important; }
+
+.arcPills { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+.arcPill {
+  padding: 5px 14px; border-radius: 999px;
+  border: 1.5px solid var(--border-md, rgba(0,0,0,0.11));
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: var(--text2); cursor: pointer;
+  transition: border-color .16s, background .16s, color .16s, transform .1s, box-shadow .16s;
+}
+.arcPill:hover { border-color: var(--text2); color: var(--text); transform: translateY(-1px); }
+.arcPillActive { background: var(--text) !important; color: var(--bg) !important; border-color: var(--text) !important; box-shadow: var(--shadow-sm); }
+.arcPill:active { transform: scale(0.95); }
+
+/* ── Notification rows ── */
+.notifSettings { display: flex; flex-direction: column; gap: .55rem; }
+.notifRow {
+  background: var(--card);
+  border: 1px solid var(--border-md, rgba(0,0,0,0.11));
+  border-radius: 18px;
+  padding: 1.1rem 1.35rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: box-shadow .2s, border-color .2s;
+}
+.notifRow:hover { box-shadow: var(--shadow-md); }
+.activeRow { border-color: rgba(116,185,255,0.35); }
+
+.notifRowLeft { display: flex; align-items: center; gap: .9rem; flex: 1; min-width: 0; }
+.notifIcon {
+  width: 38px; height: 38px; border-radius: 13px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+  transition: background .2s, border-color .2s;
+}
+.notifRowInfo { min-width: 0; }
+.notifRowTitle {
+  font-size: .88rem; font-weight: 500; color: var(--text);
+  margin-bottom: .18rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.notifRowSub {
+  font-size: .5rem; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--text3);
+}
+
+/* ── Toggle switch ── */
+.toggle {
+  width: 46px; height: 25px;
+  border-radius: 13px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border-md, rgba(0,0,0,0.11));
+  position: relative; flex-shrink: 0; cursor: pointer;
+  transition: background .2s ease, border-color .2s ease;
+}
+.toggleOn {
+  background: var(--water) !important;
+  border-color: var(--water) !important;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 19px; height: 19px;
+  border-radius: 50%; background: #ffffff;
+  top: 2px; left: 2px;
+  transition: transform .2s cubic-bezier(.34,1.4,.64,1);
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  pointer-events: none;
+}
+.toggleOn::after { transform: translateX(21px); }
+
+/* ── Test button ── */
+.testBtn {
+  width: 100%; margin-top: 1.25rem;
+  padding: .9rem;
+  border: 1px solid var(--border-md, rgba(0,0,0,0.11));
+  border-radius: 18px;
+  background: var(--card);
+  color: var(--text2);
+  font-size: .62rem; font-weight: 600;
+  letter-spacing: .25em; text-transform: uppercase;
+  transition: border-color .22s, color .22s, box-shadow .22s;
+  box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+.testBtn:hover { border-color: var(--text); color: var(--text); box-shadow: var(--shadow-md); }
+.testBtn svg { width: 14px; height: 14px; }
+.testBtnSent {
+  border-color: #22C55E !important;
+  color: #22C55E !important;
+  background: rgba(34, 197, 94, 0.06);
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   In-App Push Notification Toast
+   ═══════════════════════════════════════════════════ */
+
+.toastOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  padding: 16px 16px 0;
+  pointer-events: none;
+}
+
+.toastCard {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(30, 30, 40, 0.88);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 14px 16px 12px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  pointer-events: auto;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  /* Slide-in animation */
+  animation: toastSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform: translateY(-120%);
+}
+
+.toastCard.toastExiting {
+  animation: toastSlideOut 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes toastSlideIn {
+  0%   { transform: translateY(-120%) scale(0.92); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes toastSlideOut {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-120%) scale(0.92); opacity: 0; }
+}
+
+/* Shimmer sweep effect */
+.toastCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 60%,
+    transparent 100%
+  );
+  animation: shimmerSweep 2s ease-in-out 0.5s;
+  pointer-events: none;
+}
+
+@keyframes shimmerSweep {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+
+/* Top header row: app name + time */
+.toastHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.toastAppIcon {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, #74b9ff, #3B82F6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.toastAppName {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  flex: 1;
+}
+
+.toastTime {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: 'Space Mono', monospace;
+}
+
+/* Body area */
+.toastBody {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.toastEmoji {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+  animation: toastWobble 0.6s ease-in-out 0.4s;
+}
+
+@keyframes toastWobble {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-12deg) scale(1.1); }
+  50%      { transform: rotate(8deg) scale(1.05); }
+  75%      { transform: rotate(-4deg); }
+}
+
+.toastContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.toastTitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 3px;
+  letter-spacing: -0.01em;
+}
+
+.toastMessage {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.45;
+}
+
+/* Dismiss progress bar at bottom */
+.toastProgress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #74b9ff, #818CF8, #f472b6);
+  border-radius: 0 0 20px 20px;
+  animation: toastCountdown 4s linear forwards;
+}
+
+@keyframes toastCountdown {
+  0%   { width: 100%; }
+  100% { width: 0%; }
+}
+
+/* Tap to dismiss hint */
+.toastDismiss {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* Light mode override — use dark card for both modes (like a real phone notification) */
+:global(body:not(.dark)) .toastCard {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+:global(body:not(.dark)) .toastAppName {
+  color: rgba(0, 0, 0, 0.45);
+}
+:global(body:not(.dark)) .toastTime {
+  color: rgba(0, 0, 0, 0.3);
+}
+:global(body:not(.dark)) .toastTitle {
+  color: #1a1a2e;
+}
+:global(body:not(.dark)) .toastMessage {
+  color: rgba(0, 0, 0, 0.55);
+}
+:global(body:not(.dark)) .toastDismiss {
+  color: rgba(0, 0, 0, 0.18);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .toastOverlay {
+    padding: 10px 10px 0;
+  }
+  .toastCard {
+    border-radius: 16px;
+    padding: 12px 14px 10px;
+  }
+  .toastTitle { font-size: 14px; }
+  .toastMessage { font-size: 12px; }
+  .toastEmoji { font-size: 28px; }
+}

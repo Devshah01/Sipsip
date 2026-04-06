@@ -1,0 +1,149 @@
+/* ════════════════════════════════════════════
+   BACKDROP
+════════════════════════════════════════════ */
+.backdrop {
+  position: fixed; inset: 0; z-index: 100;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  background: rgba(15,15,25,0);
+  pointer-events: none;
+  transition: backdrop-filter 0.4s ease, background 0.4s ease;
+}
+.backdropShow {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(15,15,25,0.12);
+  pointer-events: all;
+}
+.backdropDark.backdropShow {
+  background: rgba(0,0,0,0.4);
+}
+
+/* ════════════════════════════════════════════
+   FLOATING MENU CARD
+════════════════════════════════════════════ */
+.menuCard {
+  position: fixed;
+  top: 88px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.96) translateY(-6px);
+  width: min(92vw, 500px);
+  background: #dbeafe;
+  border-radius: 26px;
+  z-index: 300;
+  overflow: hidden;
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.12),
+    0 4px 14px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+  opacity: 0;
+  pointer-events: none;
+  max-height: 0;
+  transition:
+    opacity 0.22s ease,
+    transform 0.28s cubic-bezier(0.34,1.15,0.64,1),
+    max-height 0.38s cubic-bezier(0.4,0,0.2,1);
+  padding: 8px 10px 10px;
+}
+.menuCardShow {
+  opacity: 1;
+  transform: translateX(-50%) scale(1) translateY(0);
+  pointer-events: all;
+  max-height: 500px;
+}
+.menuCardDark {
+  background: #1a1d27 !important;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Close button ── */
+.cardClose {
+  position: absolute; top: 12px; right: 12px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #eef0f5; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, background 0.15s;
+  z-index: 2; opacity: 0.6;
+}
+.cardClose:hover  { transform: rotate(90deg); opacity: 1; }
+.cardClose svg    { width: 11px; height: 11px; }
+.cardCloseDark    { background: #262b3d !important; }
+.cardCloseDark svg { stroke: #e8ecf4 !important; }
+
+/* ════════════════════════════════════════════
+   MENU ROWS
+════════════════════════════════════════════ */
+.menuRow {
+  display: flex; align-items: center;
+  width: 100%; padding: 0; border: none;
+  background: none; cursor: pointer;
+  text-align: left; border-radius: 14px;
+  transition: background 0.16s, opacity 0.18s ease;
+  margin-bottom: 2px; position: relative;
+}
+.menuRow:hover { background: rgba(147, 197, 253, 0.5); }
+.menuRow:active { transform: scale(0.99); }
+.menuRowDark:hover { background: rgba(37, 99, 235, 0.18) !important; }
+
+/* separator line between rows */
+.menuRow:not(:last-of-type)::after {
+  content: ''; display: block; position: absolute;
+  bottom: 0; left: 58px; right: 14px; height: 1px;
+  background: rgba(0,0,0,0.07); pointer-events: none;
+}
+.menuRowDark:not(:last-of-type)::after {
+  background: rgba(255,255,255,0.07) !important;
+}
+
+.menuRowInner {
+  display: flex; align-items: center;
+  width: 100%; padding: 13px 14px; gap: 0;
+}
+
+/* Icon */
+.menuRowIcon {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; flex-shrink: 0; margin-right: 12px;
+}
+.menuRowIcon svg {
+  width: 17px; height: 17px;
+  stroke: #666; fill: none;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke 0.16s;
+}
+.menuRow:hover .menuRowIcon svg  { stroke: #2563eb; }
+.menuRowDark .menuRowIcon svg    { stroke: #8892a0; }
+.menuRowDark:hover .menuRowIcon svg { stroke: #74b9ff !important; }
+
+/* Label */
+.menuRowLabel {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 600;
+  color: #1a1a1a; flex: 1;
+  transition: color 0.14s;
+  letter-spacing: -0.2px; text-align: left;
+}
+.menuRow:hover .menuRowLabel  { color: #2563eb; }
+.menuRowLabelDark             { color: #f0f2f5 !important; }
+.menuRowDark:hover .menuRowLabel { color: #74b9ff !important; }
+
+/* Character reveal animation — starts hidden, transitionDelay set inline per char */
+.ch {
+  display: inline-block;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s cubic-bezier(0.34,1.3,0.64,1);
+}
+
+/* Arrow */
+.menuRowArrow {
+  width: 16px; height: 16px;
+  opacity: 0; transform: translateX(-4px);
+  transition: opacity 0.16s, transform 0.16s;
+  flex-shrink: 0;
+}
+.menuRow:hover .menuRowArrow { opacity: 1; transform: translateX(0); }

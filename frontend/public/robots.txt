@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /auth
+Disallow: /dashboard
+Disallow: /statistics
+Disallow: /insights
+Disallow: /collection
+Disallow: /notifications
+Disallow: /profile
+Disallow: /account
+
+Sitemap: https://siipsip.com/sitemap.xml
