@@ -1,0 +1,7 @@
+{
+  "name": "sipsip-frontend",
+  "compatibility_date": "2024-04-05",
+  "assets": {
+    "directory": "./frontend/dist"
+  }
+}
