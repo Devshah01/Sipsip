@@ -5,6 +5,15 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+try {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (timezone) {
+    api.defaults.headers.common['x-timezone'] = timezone;
+  }
+} catch (e) {
+  // ignore
+}
+
 // Attach token to every request automatically
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('sipsip_token');

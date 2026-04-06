@@ -14,11 +14,11 @@ function normalizeVesselSnapshot(v) {
   return { id, name: name || 'Vessel', volumeMl };
 }
 
-function mapLogForClient(log) {
+function mapLogForClient(log, timeZone) {
   return {
     _id:       log._id,
     amount:    log.amount,
-    timestamp: formatTime(log.createdAt),
+    timestamp: formatTime(log.createdAt, timeZone),
     at:        log.createdAt,
     glass:     log.glass,
     jar:       log.jar,
@@ -92,7 +92,8 @@ const logSip = async (req, res, next) => {
       });
     }
 
-    const date = getTodayString();
+    const timeZone = req.headers['x-timezone'];
+    const date = getTodayString(timeZone);
 
     // Create water log
     const log = await WaterLog.create({
@@ -108,7 +109,7 @@ const logSip = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      log: mapLogForClient(log),
+      log: mapLogForClient(log, timeZone),
       dailySummary: {
         totalMl:  summary.totalMl,
         sipCount: summary.sipCount,
@@ -129,7 +130,8 @@ const logSip = async (req, res, next) => {
 const getTodayLogs = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const date   = getTodayString();
+    const timeZone = req.headers['x-timezone'];
+    const date   = getTodayString(timeZone);
 
     // Get all logs for today
     const logs = await WaterLog.find({ userId, date })
@@ -141,7 +143,7 @@ const getTodayLogs = async (req, res, next) => {
     res.status(200).json({
       success: true,
       date,
-      logs: logs.map(mapLogForClient),
+      logs: logs.map(log => mapLogForClient(log, timeZone)),
       summary: {
         totalMl:  summary?.totalMl  || 0,
         sipCount: summary?.sipCount || 0,
@@ -162,7 +164,8 @@ const getTodayLogs = async (req, res, next) => {
 const getLogsByDate = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const date   = req.query.date || getTodayString();
+    const timeZone = req.headers['x-timezone'];
+    const date   = req.query.date || getTodayString(timeZone);
 
     const logs = await WaterLog.find({ userId, date })
       .sort({ createdAt: 1 });
@@ -172,7 +175,7 @@ const getLogsByDate = async (req, res, next) => {
     res.status(200).json({
       success: true,
       date,
-      logs: logs.map(mapLogForClient),
+      logs: logs.map(log => mapLogForClient(log, timeZone)),
       summary: {
         totalMl:  summary?.totalMl  || 0,
         sipCount: summary?.sipCount || 0,
@@ -270,7 +273,8 @@ const syncGuestSips = async (req, res, next) => {
       });
     }
 
-    const date = getTodayString();
+    const timeZone = req.headers['x-timezone'];
+    const date = getTodayString(timeZone);
 
     const validAmounts = rawAmounts
       .map((a) => Math.round(Number(a)))

@@ -12,7 +12,17 @@ let guestSyncInFlightKey = null;
 /** Merge local guest sips into the account (only when today is still empty on the server). */
 export const syncGuestSips = async (amounts, glass, jar) => {
   const token = typeof localStorage !== 'undefined' ? localStorage.getItem('sipsip_token') : '';
-  const dayKey = new Date().toISOString().split('T')[0];
+  let dayKey = new Date().toISOString().split('T')[0];
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (tz) {
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+      const y = parts.find(p => p.type === 'year').value;
+      const m = parts.find(p => p.type === 'month').value;
+      const d = parts.find(p => p.type === 'day').value;
+      dayKey = `${y}-${m}-${d}`;
+    }
+  } catch (e) {}
   const key = `${token}|${dayKey}|${JSON.stringify(amounts)}`;
 
   if (guestSyncInFlight && guestSyncInFlightKey === key) {

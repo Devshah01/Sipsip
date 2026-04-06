@@ -15,7 +15,8 @@ const {
 const getOverview = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const today  = getTodayString();
+    const timeZone = req.headers['x-timezone'];
+    const today  = getTodayString(timeZone);
 
     // Get profile for goal
     const profile  = await Profile.findOne({ userId });
@@ -29,7 +30,7 @@ const getOverview = async (req, res, next) => {
     const goalPct      = Math.min(Math.round((totalMl / goalMl) * 100), 100);
 
     // Last 7 days for weekly avg
-    const last7Dates    = getDateRange(7);
+    const last7Dates    = getDateRange(7, timeZone);
     const weeklySummaries = await DailySummary.find({
       userId,
       date: { $in: last7Dates }
@@ -38,7 +39,7 @@ const getOverview = async (req, res, next) => {
     const goalsHit   = weeklySummaries.filter(s => s.goalHit).length;
 
     // Last 30 days for streak + frequency
-    const last30Dates   = getDateRange(30);
+    const last30Dates   = getDateRange(30, timeZone);
     const last30Summaries = await DailySummary.find({
       userId,
       date: { $in: last30Dates }
@@ -76,6 +77,7 @@ const getOverview = async (req, res, next) => {
 const getWeekly = async (req, res, next) => {
   try {
     const userId = req.user._id;
+    const timeZone = req.headers['x-timezone'];
 
     let weekDates;
     if (req.query.start) {
@@ -90,7 +92,7 @@ const getWeekly = async (req, res, next) => {
         weekDates.push(x.toISOString().split('T')[0]);
       }
     } else {
-      weekDates = getDateRange(7).reverse();
+      weekDates = getDateRange(7, timeZone).reverse();
     }
 
     const summaries = await DailySummary.find({
@@ -132,8 +134,9 @@ const getWeekly = async (req, res, next) => {
 const getSummary = async (req, res, next) => {
   try {
     const userId = req.user._id;
+    const timeZone = req.headers['x-timezone'];
     const days   = parseInt(req.query.days) || 90;
-    const dates  = getDateRange(days);
+    const dates  = getDateRange(days, timeZone);
 
     const summaries = await DailySummary.find({
       userId,
@@ -164,7 +167,8 @@ const getSummary = async (req, res, next) => {
 const getBestDay = async (req, res, next) => {
   try {
     const userId  = req.user._id;
-    const dates   = getDateRange(90);
+    const timeZone = req.headers['x-timezone'];
+    const dates   = getDateRange(90, timeZone);
 
     const best = await DailySummary.findOne({
       userId,
