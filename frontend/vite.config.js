@@ -16,7 +16,7 @@ export default defineConfig({
         description: 'Sipsip Hydration Tracker',
         start_url: '/',
         scope: '/',
-        theme_color: '#ffffff',
+        theme_color: '#0A2463',
         background_color: '#ffffff',
         display: 'standalone',
         icons: [
