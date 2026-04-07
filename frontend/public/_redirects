@@ -3,4 +3,3 @@
 /workbox-*.js /workbox-:splat.js 200
 /registerSW.js /registerSW.js 200
 /manifest.webmanifest /manifest.webmanifest 200
-/* /index.html 200
