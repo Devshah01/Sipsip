@@ -589,18 +589,7 @@ export default function Dashboard() {
           }
           goalShown.current = false;
           updateUI();
-          // replay sip bubbles from today's logs
-          if (todayData.logs && todayData.logs.length > 0) {
-            if (emptyState) emptyState.setAttribute('display', 'none');
-            clearActivityReplayTimers();
-            sips.current = [];
-            if (bubblesGrp) bubblesGrp.innerHTML = '';
-            todayData.logs.forEach((log, i) => {
-              const tid = setTimeout(() => addSipBubble(log.amount), 50 * i);
-              activityReplayTimers.current.push(tid);
-            });
-            if (sipCountEl) sipCountEl.textContent = `${todayData.logs.length} Sip${todayData.logs.length !== 1 ? 's' : ''}`;
-          }
+          replaySipBubbles(todayData.logs);
           // update stats bar with today's data
           const goalPct = Math.round((totalPoured.current / J_MAX) * 100);
           const $ = id => statsBarRef.current?.querySelector(`#${id}`);
@@ -660,17 +649,7 @@ export default function Dashboard() {
             goalShown.current = false;
             updateUI();
             
-            if (dt.logs && dt.logs.length > 0) {
-              if (emptyState) emptyState.setAttribute('display', 'none');
-              clearActivityReplayTimers();
-              sips.current = [];
-              if (bubblesGrp) bubblesGrp.innerHTML = '';
-              dt.logs.forEach((log, i) => {
-                const tid = setTimeout(() => addSipBubble(log.vol || log.amount || 0), 50 * i);
-                activityReplayTimers.current.push(tid);
-              });
-              if (sipCountEl) sipCountEl.textContent = `${dt.logs.length} Sip${dt.logs.length !== 1 ? 's' : ''}`;
-            }
+            replaySipBubbles(dt.logs);
 
             const goalPct = Math.round((totalPoured.current / J_MAX) * 100);
             const $ = id => statsBarRef.current?.querySelector(`#${id}`);
@@ -880,24 +859,65 @@ export default function Dashboard() {
       return null;
     }
 
-    function getTime() {
-      const n = new Date(); let h = n.getHours();
+    function getTime(value = new Date()) {
+      const n = value instanceof Date ? new Date(value) : new Date(value);
+      if (Number.isNaN(n.getTime())) return '';
+      let h = n.getHours();
       const m = String(n.getMinutes()).padStart(2, '0');
       const ap = h >= 12 ? 'pm' : 'am'; h = h % 12 || 12;
       return `${h}:${m} ${ap}`;
     }
 
-    function getBubblePalette() {
+    function getSipBubbleTime(sip = {}) {
+      if (typeof sip.timestamp === 'string' && sip.timestamp.trim()) return sip.timestamp.trim();
+      if (typeof sip.time === 'string' && sip.time.trim()) return sip.time.trim();
+      const fallbackTime = sip.at ? getTime(sip.at) : '';
+      return fallbackTime || getTime();
+    }
+
+    function getBubblePalette(savedPalIdx) {
       const set = isDarkRef.current ? BUBBLE_PALETTES.dark : BUBBLE_PALETTES.light;
+      if (Number.isInteger(savedPalIdx) && savedPalIdx >= 0 && savedPalIdx < set.length) {
+        return { pal: set[savedPalIdx], palIdx: savedPalIdx };
+      }
       const palIdx = Math.floor(Math.random() * set.length);
       return { pal: set[palIdx], palIdx };
     }
 
-    function addSipBubble(vol) {
-      const r = volToRadius(vol), pos = placeBubble(r);
+    function replaySipBubbles(logs = []) {
+      if (!Array.isArray(logs) || logs.length === 0) return;
+
+      const validLogs = logs
+        .map((log) => {
+          const vol = Number(log?.vol ?? log?.amount ?? 0);
+          if (!Number.isFinite(vol) || vol <= 0) return null;
+          return { ...log, _bubbleVol: vol };
+        })
+        .filter(Boolean);
+
+      if (validLogs.length === 0) return;
+
+      if (emptyState) emptyState.setAttribute('display', 'none');
+      clearActivityReplayTimers();
+      sips.current = [];
+      if (bubblesGrp) bubblesGrp.innerHTML = '';
+
+      validLogs.forEach((log, i) => {
+        const tid = setTimeout(() => addSipBubble(log._bubbleVol, log), 50 * i);
+        activityReplayTimers.current.push(tid);
+      });
+
+      if (sipCountEl) sipCountEl.textContent = `${validLogs.length} Sip${validLogs.length !== 1 ? 's' : ''}`;
+    }
+
+    function addSipBubble(vol, sipMeta = {}) {
+      const r = volToRadius(vol);
+      const hasStoredPosition = Number.isFinite(sipMeta.x) && Number.isFinite(sipMeta.y);
+      const pos = hasStoredPosition ? { x: sipMeta.x, y: sipMeta.y } : placeBubble(r);
       if (!pos) return;
-      const timeStr = getTime(), { pal, palIdx } = getBubblePalette();
-      sips.current.push({ vol, time: timeStr, r, x: pos.x, y: pos.y, palIdx });
+      const timeStr = getSipBubbleTime(sipMeta);
+      const { pal, palIdx } = getBubblePalette(sipMeta.palIdx);
+      sips.current.push({ vol, time: timeStr, timestamp: timeStr, r, x: pos.x, y: pos.y, palIdx });
       if (sips.current.length === 1) emptyState.setAttribute('display', 'none');
       const g = document.createElementNS(NS, 'g');
       g.setAttribute('class', 'sip-bubble');
