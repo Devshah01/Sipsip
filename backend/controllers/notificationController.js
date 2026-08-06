@@ -1,4 +1,5 @@
 const NotificationSettings = require('../models/NotificationSettings');
+const Profile              = require('../models/Profile');
 const webpush              = require('../utils/vapid');
 
 // ── GET /api/notifications/vapid-public-key ───────────────────────────────────
@@ -77,7 +78,11 @@ exports.updateSettings = async (req, res) => {
     if (update.frequencyMinutes !== undefined) {
       const n = Number(update.frequencyMinutes);
       if (Number.isNaN(n)) delete update.frequencyMinutes;
-      else update.frequencyMinutes = Math.max(15, Math.min(480, n));
+      else {
+        update.frequencyMinutes = Math.max(15, Math.min(480, n));
+        // Reset the notification timer so the new interval starts now
+        update.lastPushedAt = new Date();
+      }
     }
 
     const REMINDER_KEYS = ['sip', 'goal', 'morning', 'streak', 'weekly', 'bed'];
@@ -103,6 +108,19 @@ exports.updateSettings = async (req, res) => {
       update,
       { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
     );
+
+    // Keep Profile's wake/sleep times in sync when changed via notification settings
+    const profileSync = {};
+    if (update.wakeTime)  profileSync.wakeTime  = update.wakeTime;
+    if (update.sleepTime) profileSync.sleepTime = update.sleepTime;
+    if (Object.keys(profileSync).length > 0) {
+      await Profile.findOneAndUpdate(
+        { userId: req.user._id },
+        { $set: profileSync },
+        { upsert: false },
+      );
+    }
+
     res.json({ success: true, settings });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

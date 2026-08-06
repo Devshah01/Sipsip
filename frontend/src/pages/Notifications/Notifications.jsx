@@ -381,10 +381,19 @@ export default function Notifications() {
               r.id,
               mapped.reminderPreferences?.[r.id] ?? r.defaultOn,
             ])));
-            // wakeTime/sleepTime now come from profile — no local set needed
-            // Backfill IANA time zone for older accounts (server used local TZ before)
-            if (!s.timeZone) {
-              patchNotificationSettings(authToken, {}).catch(() => {});
+
+            // Sync wake/sleep from Profile → NotificationSettings if they differ.
+            // This ensures the scheduler always uses the user's actual schedule.
+            const syncPayload = {};
+            if (!s.timeZone) syncPayload.timeZone = undefined; // triggers getClientTimeZone in patchNotificationSettings
+            if (s.wakeTime !== wakeTimeStr)  syncPayload.wakeTime  = wakeTimeStr;
+            if (s.sleepTime !== sleepTimeStr) syncPayload.sleepTime = sleepTimeStr;
+
+            if (Object.keys(syncPayload).length > 0 || !s.timeZone) {
+              patchNotificationSettings(authToken, {
+                ...(syncPayload.wakeTime  ? { wakeTime: syncPayload.wakeTime }   : {}),
+                ...(syncPayload.sleepTime ? { sleepTime: syncPayload.sleepTime } : {}),
+              }).catch(() => {});
             }
           }
         } catch (e) {

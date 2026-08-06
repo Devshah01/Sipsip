@@ -1,4 +1,5 @@
-const Profile = require('../models/Profile');
+const Profile              = require('../models/Profile');
+const NotificationSettings = require('../models/NotificationSettings');
 const { calculateDailyGoal } = require('../utils/hydrationGoal');
 
 const getMyProfile = async (req, res, next) => {
@@ -61,6 +62,19 @@ const updateMyProfile = async (req, res, next) => {
       { $set: update },
       { returnDocument: 'after', upsert: true, runValidators: true }
     );
+
+    // Sync wake/sleep times to NotificationSettings so the push scheduler
+    // uses the correct active window
+    const notifUpdate = {};
+    if (update.wakeTime)  notifUpdate.wakeTime  = update.wakeTime;
+    if (update.sleepTime) notifUpdate.sleepTime = update.sleepTime;
+    if (Object.keys(notifUpdate).length > 0) {
+      await NotificationSettings.findOneAndUpdate(
+        { userId },
+        notifUpdate,
+        { upsert: false },
+      );
+    }
 
     res.status(200).json({
       success: true,

@@ -46,6 +46,11 @@ const NotificationSettingsSchema = new mongoose.Schema({
     type:    Date,
     default: null,
   },
+  // Track last-sent date (YYYY-MM-DD) for each special notification to prevent duplicates
+  lastMorningSentDate: { type: String, default: null },
+  lastWeeklySentDate:  { type: String, default: null },
+  lastBedSentDate:     { type: String, default: null },
+  lastStreakSentDate:   { type: String, default: null },
   // Per-type toggles (matches Notifications page rows)
   reminderPreferences: {
     sip:     { type: Boolean, default: true },

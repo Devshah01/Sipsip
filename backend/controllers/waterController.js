@@ -1,7 +1,8 @@
-const WaterLog       = require('../models/WaterLog');
-const DailySummary   = require('../models/DailySummary');
-const Profile        = require('../models/Profile');
-const GuestSyncLock  = require('../models/GuestSyncLock');
+const WaterLog             = require('../models/WaterLog');
+const DailySummary         = require('../models/DailySummary');
+const Profile              = require('../models/Profile');
+const GuestSyncLock        = require('../models/GuestSyncLock');
+const NotificationSettings = require('../models/NotificationSettings');
 const { getTodayString, formatTime } = require('../utils/dateHelper');
 
 function normalizeVesselSnapshot(v) {
@@ -106,6 +107,12 @@ const logSip = async (req, res, next) => {
 
     // Update daily summary
     const { summary, justHitGoal } = await updateDailySummary(userId, date, amount);
+
+    // Reset notification timer so next reminder is relative to this sip
+    await NotificationSettings.findOneAndUpdate(
+      { userId },
+      { lastPushedAt: new Date() },
+    );
 
     res.status(201).json({
       success: true,
