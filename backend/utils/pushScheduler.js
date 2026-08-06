@@ -342,4 +342,4 @@ function startScheduler() {
   console.log('🔔 Push notification scheduler started (checks every minute)');
 }
 
-module.exports = { startScheduler };
+module.exports = { startScheduler, runScheduler };

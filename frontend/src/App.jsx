@@ -6,6 +6,7 @@ import GlobalPushToast   from '@/components/GlobalPushToast/GlobalPushToast';
 import { fetchVesselSettings } from '@/store/slices/collectionSlice';
 import { setCredentials } from '@/store/slices/authSlice';
 import { getCurrentUser } from '@/services/authService';
+import useSchedulerKeepAlive from '@/hooks/useSchedulerKeepAlive';
 
 function AppInner() {
   const theme    = useSelector(state => state.ui.theme);
@@ -17,6 +18,9 @@ function AppInner() {
     if (theme === 'dark') document.body.classList.add('dark');
     else                  document.body.classList.remove('dark');
   }, [theme]);
+
+  // Keep the Cloud Run backend warm so the push scheduler runs every minute
+  useSchedulerKeepAlive();
 
   // Restore vessel selection on every app load so the selected
   // glass/jar persists across refreshes and navigation.

@@ -162,3 +162,30 @@ exports.sendTest = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+// ── POST /api/notifications/cron-tick ────────────────────────────────────────
+// Triggers the push scheduler on demand. Called by:
+// 1. Google Cloud Scheduler (every minute) — secured by CRON_SECRET header
+// 2. Frontend keep-alive ping (every minute while app is open)
+// This is necessary because Cloud Run throttles CPU when idle, so
+// setInterval-based scheduling is unreliable on serverless platforms.
+exports.cronTick = async (req, res) => {
+  try {
+    // Validate the cron secret (skip check if no secret is configured,
+    // so the feature works immediately without extra env setup)
+    const secret = process.env.CRON_SECRET;
+    if (secret) {
+      const provided = req.headers['x-cron-secret'] || req.query.secret;
+      if (provided !== secret) {
+        return res.status(403).json({ success: false, message: 'Forbidden' });
+      }
+    }
+
+    const { runScheduler } = require('../utils/pushScheduler');
+    await runScheduler();
+    res.json({ success: true, message: 'Scheduler tick completed' });
+  } catch (err) {
+    console.error('[cronTick]', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
